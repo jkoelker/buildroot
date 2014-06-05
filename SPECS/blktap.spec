@@ -1,10 +1,12 @@
+%define tag_version 0.9.2
+
 Summary: Enhanced version of tapdisk
 Name:    blktap
-Version: 0.9.2
-Release: 1%{?dist}
+Version: 2.0.90
+Release: 9%{?dist}
 License: LGPL+linking exception
 URL:  https://github.com/xapi-project/blktap
-Source0: https://github.com/xapi-project/%{name}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0: https://github.com/xapi-project/%{name}/archive/%{tag_version}/%{name}-%{tag_version}.tar.gz
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: libaio-devel
@@ -16,41 +18,62 @@ BuildRequires: openssl-devel
 %description
 Enhanced version of tapdisk with support for storage mirroring.
 
-%prep 
-%setup -q
+%package devel
+Summary: BlkTap Development Headers and Libraries
+Requires: blktap = %{version}
+Group: Development/Libraries
 
+%description devel
+This package contains the blktap development libraries and header files.
+
+%prep
+%setup -q -n %{name}-%{tag_version}
 
 %build
 sh autogen.sh
-./configure --prefix %{_libdir}/%{name}
-make
+%configure --disable-static
+%{__make} USE_SYSTEM_LIBRARIES=y
 
 %install
-
-mkdir -p %{buildroot}/%{_libdir}/%{name}
-mkdir -p %{buildroot}/%{_libdir}/%{name}/lib
-mkdir -p %{buildroot}/%{_libdir}/%{name}/sbin
-mkdir -p %{buildroot}/%{_libdir}/%{name}/bin
-mkdir -p %{buildroot}/%{_libdir}/%{name}/include/blktap
-mkdir -p %{buildroot}/%{_libdir}/%{name}/include/vhd
-mkdir -p %{buildroot}/%{_libdir}/%{name}/libexec
-mkdir -p %{buildroot}/%{_libdir}/%{name}/etc/udev/rules.d
-
-make install DESTDIR=%{buildroot}
-
+%{__make} install USE_SYSTEM_LIBRARIES=y \
+                  DESTDIR=$RPM_BUILD_ROOT \
+                  LIBDIR=%{_libdir} \
+                  SBINDIR=%{_sbindir} \
+                  SYSCONFDIR=%{_sysconfdir} \
+                  -Wno-format
+#removing .la file
+rm -rf $RPM_BUILD_ROOT%{_libdir}/libblktapctl.la
 
 %files
-%{_libdir}/%{name}/bin/*
-%{_libdir}/%{name}/etc/udev/rules.d/blktap.rules
-%{_libdir}/%{name}/etc/cron.daily/blktap-log-cleanup
-%{_libdir}/%{name}/etc/logrotate.d/blktap
-%{_libdir}/%{name}/include/blktap/*
-%{_libdir}/%{name}/include/vhd/*
-%{_libdir}/%{name}/lib/*
-%{_libdir}/%{name}/libexec/*
-%{_libdir}/%{name}/sbin/*
+%defattr(-,root,root,-)
+%doc README
+%{_libdir}/libvhd.so*
+%{_libdir}/libvhdio.so*
+%{_libdir}/libblktapctl.so*
+%{_bindir}/vhd-*
+%{_sbindir}/lvm-util
+%{_sbindir}/part-util
+%{_sbindir}/tap-ctl
+%{_sbindir}/td-rated
+%{_sbindir}/td-util
+%{_sbindir}/vhdpartx
+%{_libexecdir}/tapdisk
+%{_sysconfdir}/udev/rules.d/blktap.rules
+%{_sysconfdir}/cron.daily/blktap-log-cleanup
+%{_sysconfdir}/logrotate.d/blktap
+
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/blktap/*
+%{_includedir}/vhd/*
+%{_libdir}/libvhd*
+
 
 %changelog
+* Thu Jun 05 2014 Jason Kölker <jason@koelker.net> - 0.9.2-2
+- Split devel into separate package
+- Use epoch hammer to handle upgrade from fedora versioning
+
 * Wed Jun 04 2014 Bob Ball <bob.ball@citrix.com> - 0.9.2-1
 - Update blktap to latest release
 
