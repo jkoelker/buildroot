@@ -7,6 +7,7 @@ XAPISRCBASEURL=${SRC_REPO_LOCATION:-file://$PWD/SRPMS/}
 DISTRIBUTION=`lsb_release -si`
 
 sed \
+    -e "s,@DISTRIBUTION@,${DISTRIBUTION},g" \
     -e "s,@XAPIBASEURL@,${XAPIBASEURL},g" \
     -e "s,@XAPISRCBASEURL@,${XAPISRCBASEURL},g" \
     scripts/rpm/xapi.repo.in > scripts/rpm/xapi.repo
