@@ -10,7 +10,7 @@ Source0:        https://github.com/xapi-project/libvhd/archive/libvhd-%{version}
 BuildRequires:  libuuid-devel
 BuildRequires:  ocaml
 BuildRequires:  ocaml-findlib
-BuildRequires:  xen-devel
+BuildRequires:  blktap-devel
 
 %description
 Simple C bindings which allow .vhd files to be manipulated.
@@ -19,7 +19,7 @@ Simple C bindings which allow .vhd files to be manipulated.
 Summary:        Development files for %{name}
 Requires:       %{name} = %{version}-%{release}
 Requires:       libuuid-devel%{?_isa}
-Requires:       xen-devel%{?_isa}
+Requires:       blktap-devel%{?_isa}
 
 %description    devel
 The %{name}-devel package contains libraries and signature files for
