@@ -1,8 +1,8 @@
 %global debug_package %{nil}
 
 Name:           ocaml-xen-lowlevel-libs
-Version:        0.9.14
-Release:        2%{?dist}
+Version:        0.9.15
+Release:        1%{?dist}
 Summary:        Xen hypercall bindings for OCaml
 License:        LGPL
 URL:            https://github.com/xapi-project/ocaml-xen-lowlevel-libs
@@ -40,7 +40,7 @@ make
 export OCAMLFIND_DESTDIR=%{buildroot}/%{_libdir}/ocaml
 mkdir -p $OCAMLFIND_DESTDIR/stublibs
 export OCAMLFIND_LDCONF=ignore
-make install DESTDIR=${buildroot}
+make install DESTDIR=%{buildroot} BINDIR=%{buildroot}/%{_libdir}/xcp/lib
 
 
 %files
@@ -52,6 +52,8 @@ make install DESTDIR=${buildroot}
 %exclude %{_libdir}/ocaml/xenctrl/*.mli
 %{_libdir}/ocaml/stublibs/dllxenctrl_stubs.so
 %{_libdir}/ocaml/stublibs/dllxenctrl_stubs.so.owner
+%{_libdir}/xcp/lib/xenguest
+
 
 #%{_libdir}/ocaml/xenlight
 #%exclude %{_libdir}/ocaml/xenlight/*.a
@@ -75,6 +77,9 @@ make install DESTDIR=${buildroot}
 #%{_libdir}/ocaml/xenlight/*.mli
 
 %changelog
+* Sat Jun  7 2014 Jason Kölker <jason@koelker.net> - 0.9.15-1
+- Update to 0.9.15
+
 * Mon Jun  2 2014 Euan Harris <euan.harris@citrix.com> - 0.9.14-2
 - Split files correctly between base and devel packages
 
